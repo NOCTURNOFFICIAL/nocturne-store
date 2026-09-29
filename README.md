@@ -1,1 +1,395 @@
-# nocturne-store
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>NOCTURNE — Y2K Streetwear</title>
+  <style>
+    :root {
+      --bg: #090a0f;
+      --card-bg: #12141d;
+      --text: #f0f3f9;
+      --muted: #8892b0;
+      --silver: #e2e8f0;
+      --chrome-gradient: linear-gradient(135deg, #e2e8f0 0%, #94a3b8 50%, #cbd5e1 100%);
+      --chrome-border: linear-gradient(135deg, #ffffff 0%, #475569 50%, #94a3b8 100%);
+      --accent-glow: rgba(226, 232, 240, 0.15);
+      --font-main: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background-color: var(--bg);
+      color: var(--text);
+      font-family: var(--font-main);
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      background-image: 
+        radial-gradient(circle at 50% 0%, rgba(255, 255, 255, 0.05) 0%, transparent 70%),
+        linear-gradient(to bottom, rgba(255,255,255,0.02) 1px, transparent 1px);
+      background-size: 100% 100%, 100% 4px;
+    }
+
+    .app-container {
+      width: 100%;
+      max-width: 480px;
+      min-height: 100vh;
+      padding: 16px 12px 80px 12px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    /* HEADER */
+    .header {
+      text-align: center;
+      padding: 20px 12px 16px 12px;
+      background: rgba(18, 20, 29, 0.8);
+      backdrop-filter: blur(12px);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      border-radius: 16px;
+      position: relative;
+      overflow: hidden;
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
+    }
+
+    .header::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 2px;
+      background: var(--chrome-gradient);
+    }
+
+    .brand-subtitle {
+      font-size: 10px;
+      letter-spacing: 4px;
+      color: var(--muted);
+      text-transform: uppercase;
+      margin-bottom: 4px;
+    }
+
+    .brand-title {
+      font-size: 32px;
+      font-weight: 900;
+      letter-spacing: 6px;
+      background: linear-gradient(180deg, #ffffff 0%, #94a3b8 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      text-transform: uppercase;
+      margin-bottom: 4px;
+      text-shadow: 0 0 20px rgba(255, 255, 255, 0.2);
+    }
+
+    .brand-tagline {
+      font-size: 11px;
+      color: #cbd5e1;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+    }
+
+    /* SEARCH & FILTER */
+    .search-box {
+      width: 100%;
+      position: relative;
+    }
+
+    .search-input {
+      width: 100%;
+      padding: 12px 16px;
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      border-radius: 10px;
+      color: #fff;
+      font-size: 13px;
+      letter-spacing: 1px;
+      outline: none;
+      transition: all 0.3s ease;
+    }
+
+    .search-input:focus {
+      border-color: #ffffff;
+      background: rgba(255, 255, 255, 0.08);
+      box-shadow: 0 0 12px rgba(255, 255, 255, 0.15);
+    }
+
+    .categories {
+      display: flex;
+      gap: 8px;
+      overflow-x: auto;
+      padding-bottom: 4px;
+      scrollbar-width: none;
+    }
+
+    .categories::-webkit-scrollbar {
+      display: none;
+    }
+
+    .cat-btn {
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      color: var(--muted);
+      padding: 8px 14px;
+      border-radius: 8px;
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 1px;
+      white-space: nowrap;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .cat-btn.active, .cat-btn:hover {
+      background: #ffffff;
+      color: #000000;
+      border-color: #ffffff;
+      box-shadow: 0 0 10px rgba(255, 255, 255, 0.3);
+    }
+
+    /* PRODUCT GRID - STRICT 2 COLUMNS */
+    .product-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 12px;
+    }
+
+    .product-card {
+      background: var(--card-bg);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 12px;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      text-decoration: none;
+      color: inherit;
+      position: relative;
+      transition: transform 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .product-card:hover {
+      transform: translateY(-3px);
+      border-color: rgba(255, 255, 255, 0.4);
+      box-shadow: 0 6px 20px rgba(0, 0, 0, 0.6);
+    }
+
+    .img-wrapper {
+      width: 100%;
+      aspect-ratio: 1 / 1;
+      background: #1a1d28;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .product-img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+      transition: transform 0.3s ease;
+    }
+
+    .product-card:hover .product-img {
+      transform: scale(1.05);
+    }
+
+    .card-info {
+      padding: 10px;
+      display: flex;
+      flex-direction: column;
+      flex-grow: 1;
+      justify-content: space-between;
+      gap: 8px;
+    }
+
+    .product-title {
+      font-size: 11px;
+      font-weight: 700;
+      line-height: 1.3;
+      color: #e2e8f0;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+
+    .price-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .price {
+      font-size: 14px;
+      font-weight: 900;
+      color: #ffffff;
+      letter-spacing: 0.5px;
+    }
+
+    .shop-btn {
+      width: 100%;
+      padding: 8px;
+      background: linear-gradient(135deg, #ffffff 0%, #cbd5e1 100%);
+      color: #000000;
+      font-size: 10px;
+      font-weight: 800;
+      letter-spacing: 1px;
+      text-align: center;
+      border-radius: 6px;
+      text-transform: uppercase;
+      transition: background 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .product-card:hover .shop-btn {
+      background: #ffffff;
+      box-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
+    }
+
+    /* FOOTER */
+    .footer {
+      text-align: center;
+      padding: 24px 0;
+      font-size: 10px;
+      color: var(--muted);
+      letter-spacing: 2px;
+      text-transform: uppercase;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="app-container">
+    
+    <!-- HEADER -->
+    <header class="header">
+      <div class="brand-subtitle">✦ Y2K STREETWEAR ✦</div>
+      <h1 class="brand-title">NOCTURNE</h1>
+      <div class="brand-tagline">ALL ITEMS AT ₱150</div>
+    </header>
+
+    <!-- SEARCH BAR -->
+    <div class="search-box">
+      <input type="text" id="searchInput" class="search-input" placeholder="SEARCH ITEM OR TAG...">
+    </div>
+
+    <!-- CATEGORIES -->
+    <div class="categories">
+      <button class="cat-btn active" onclick="filterCategory('ALL')">ALL</button>
+      <button class="cat-btn" onclick="filterCategory('BOX POLO / SHIRTS')">BOX POLO / SHIRTS</button>
+      <button class="cat-btn" onclick="filterCategory('BOXY TEES')">BOXY TEES</button>
+      <button class="cat-btn" onclick="filterCategory('PANTS')">PANTS</button>
+      <button class="cat-btn" onclick="filterCategory('CROP TEES')">CROP TEES</button>
+    </div>
+
+    <!-- PRODUCT GRID (2 COLUMNS) -->
+    <div class="product-grid" id="productGrid"></div>
+
+    <!-- FOOTER -->
+    <footer class="footer">
+      NOCTURNE © 2026 — AFFILIATE SHOWCASE
+    </footer>
+
+  </div>
+
+  <script>
+    const products = [
+      { id: 1, title: "Box Polo Striped Short Sleeve", price: "₱150", category: "BOX POLO / SHIRTS", image: "https://i.postimg.cc/Pxr10q5y/IMG-8198.jpg", url: "https://s.lazada.com.ph/s.Z7oT03?c=d" },
+      { id: 2, title: "Plaid Oversized Short Sleeve Shirt", price: "₱150", category: "BOX POLO / SHIRTS", image: "https://i.postimg.cc/zBXT4fGP/IMG-8199.jpg", url: "https://s.lazada.com.ph/s.Z7oTjY?c=d" },
+      { id: 3, title: "Light Blue Vertical Stripe Box Polo", price: "₱150", category: "BOX POLO / SHIRTS", image: "https://i.postimg.cc/XJ79tvY1/IMG-8200.jpg", url: "https://s.lazada.com.ph/s.Z7o6FN?c=d" },
+      { id: 4, title: "Pink Striped Boxy Fit Crop Shirt", price: "₱150", category: "BOX POLO / SHIRTS", image: "https://i.postimg.cc/635CFQpg/IMG-8201.jpg", url: "https://s.lazada.com.ph/s.Z7ohYk?c=d" },
+      { id: 5, title: "Kinwoo Baggy Vintage Blue Jeans", price: "₱150", category: "PANTS", image: "https://i.postimg.cc/85PLxCzx/IMG-8202.jpg", url: "https://s.lazada.com.ph/s.Z7ohdk?c=d" },
+      { id: 6, title: "9th Nova God Did Boxy Graphic Tee", price: "₱150", category: "BOXY TEES", image: "https://i.postimg.cc/SsNcHKxw/IMG-8203.jpg", url: "https://s.lazada.com.ph/s.Z7ohWs?c=d" },
+      { id: 7, title: "DVNT We Dont Trust You Oversized Tee", price: "₱150", category: "BOXY TEES", image: "https://i.postimg.cc/hjPVNGt5/IMG-8204.jpg", url: "https://s.lazada.com.ph/s.Z7oh3G?c=d" },
+      { id: 8, title: "Spider Drip Graphic Crop Tee", price: "₱150", category: "CROP TEES", image: "https://i.postimg.cc/fL2YshVg/IMG-8205.jpg", url: "https://s.lazada.com.ph/s.Z7oheN?c=d" },
+      { id: 9, title: "Neverdie Number 23 Athletic Crop Tee", price: "₱150", category: "CROP TEES", image: "https://i.postimg.cc/Jn4jShhC/IMG-8206.jpg", url: "https://s.lazada.com.ph/s.Z7ohVl?c=d" },
+      { id: 10, title: "Neverdying Y2K Star Sparkle Tee", price: "₱150", category: "BOXY TEES", image: "https://i.postimg.cc/ydY02NN4/IMG-8207.jpg", url: "https://s.lazada.com.ph/s.Z7oh4l?c=d" },
+      { id: 11, title: "Streetwear Boxy Fit Polo #11", price: "₱150", category: "BOX POLO / SHIRTS", image: "https://i.postimg.cc/3RS2hHkz/IMG-8208.jpg", url: "https://s.lazada.com.ph/s.Z7ohfr?c=d" },
+      { id: 12, title: "Y2K Graphic Boxy Tee #12", price: "₱150", category: "BOXY TEES", image: "https://i.postimg.cc/DZj1hKSH/IMG-8209.jpg", url: "https://s.lazada.com.ph/s.Z7oh5c?c=d" },
+      { id: 13, title: "Monochrome Cyber Crop Top #13", price: "₱150", category: "CROP TEES", image: "https://i.postimg.cc/cH9fWNvk/IMG-8210.jpg", url: "https://s.lazada.com.ph/s.Z7ohgF?c=d" },
+      { id: 14, title: "Vintage Oversized Button Polo #14", price: "₱150", category: "BOX POLO / SHIRTS", image: "https://i.postimg.cc/1tCDSZgm/IMG-8211.jpg", url: "https://s.lazada.com.ph/s.Z7oh6M?c=d" },
+      { id: 15, title: "Dark Aesthetic Loose Denim Pants #15", price: "₱150", category: "PANTS", image: "https://i.postimg.cc/cH9fWNKW/IMG-8212.jpg", url: "https://s.lazada.com.ph/s.Z7ohhp?c=d" },
+      { id: 16, title: "Heavyweight Boxy Graphic Tee #16", price: "₱150", category: "BOXY TEES", image: "https://i.postimg.cc/fL2Ysh3D/IMG-8213.jpg", url: "https://s.lazada.com.ph/s.Z7ohSN?c=d" },
+      { id: 17, title: "Minimalist Black Crop Tee #17", price: "₱150", category: "CROP TEES", image: "https://i.postimg.cc/SsTc4pXn/IMG-8214.jpg", url: "https://s.lazada.com.ph/s.Z7ohi9?c=d" },
+      { id: 18, title: "Striped Casual Short Polo #18", price: "₱150", category: "BOX POLO / SHIRTS", image: "https://i.postimg.cc/QCF1xn5X/IMG-8215.jpg", url: "https://s.lazada.com.ph/s.Z7ohRY?c=d" },
+      { id: 19, title: "Gothic Typography Boxy Tee #19", price: "₱150", category: "BOXY TEES", image: "https://i.postimg.cc/j5gyTrWq/IMG-8216.jpg", url: "https://s.lazada.com.ph/s.Z7ohRz?c=d" },
+      { id: 20, title: "Washed Grey Wide Leg Pants #20", price: "₱150", category: "PANTS", image: "https://i.postimg.cc/D0SLyYs4/IMG-8217.jpg", url: "https://s.lazada.com.ph/s.Z7oh8u?c=d" },
+      { id: 21, title: "NOCTURNE Edition Boxy Item #21", price: "₱150", category: "BOXY TEES", image: "https://i.postimg.cc/NFKmfPTM/IMG-8218.jpg", url: "https://s.lazada.com.ph/s.Z7ohjq?c=d" },
+      { id: 22, title: "NOCTURNE Edition Boxy Item #22", price: "₱150", category: "BOX POLO / SHIRTS", image: "https://i.postimg.cc/x8XMTFHd/IMG-8219.jpg", url: "https://s.lazada.com.ph/s.Z7ohQx?c=d" },
+      { id: 23, title: "NOCTURNE Edition Boxy Item #23", price: "₱150", category: "CROP TEES", image: "https://i.postimg.cc/nrXBcw7Y/IMG-8220.jpg", url: "https://s.lazada.com.ph/s.Z7ohk9?c=d." },
+      { id: 24, title: "NOCTURNE Edition Boxy Item #24", price: "₱150", category: "BOXY TEES", image: "https://i.postimg.cc/5yXLNkv8/IMG-8221.jpg", url: "https://s.lazada.com.ph/s.Z7ohlX?c=d." },
+      { id: 25, title: "NOCTURNE Edition Boxy Item #25", price: "₱150", category: "PANTS", image: "https://i.postimg.cc/8c7MPnWh/IMG-8222.jpg", url: "https://s.lazada.com.ph/s.Z7ohmh?c=d." },
+      { id: 26, title: "NOCTURNE Edition Boxy Item #26", price: "₱150", category: "BOXY TEES", image: "https://i.postimg.cc/2ygvqFFQ/IMG-8223.jpg", url: "https://s.lazada.com.ph/s.Z7ohNj?c=d." },
+      { id: 27, title: "NOCTURNE Edition Boxy Item #27", price: "₱150", category: "CROP TEES", image: "https://i.postimg.cc/yxDcYr9f/IMG-8224.jpg", url: "https://s.lazada.com.ph/s.Z7ohLe?c=d." },
+      { id: 28, title: "NOCTURNE Edition Boxy Item #28", price: "₱150", category: "BOX POLO / SHIRTS", image: "https://i.postimg.cc/fyVmTgXC/IMG-8225.jpg", url: "https://s.lazada.com.ph/s.Z7ohpN?c=d." },
+      { id: 29, title: "NOCTURNE Edition Boxy Item #29", price: "₱150", category: "BOXY TEES", image: "https://i.postimg.cc/T1Bmyqq7/IMG-8226.jpg", url: "https://s.lazada.com.ph/s.Z7ohKv?c=d." },
+      { id: 30, title: "NOCTURNE Edition Boxy Item #30", price: "₱150", category: "PANTS", image: "https://i.postimg.cc/WzxrD669/IMG-8227.jpg", url: "https://s.lazada.com.ph/s.Z7ohJb?c=d" },
+      { id: 31, title: "NOCTURNE Edition Boxy Item #31", price: "₱150", category: "CROP TEES", image: "https://i.postimg.cc/8cxWFBBH/IMG-8228.jpg", url: "https://s.lazada.com.ph/s.Z7ohrp?c=d" }
+    ];
+
+    let activeCat = "ALL";
+    let searchQuery = "";
+
+    function renderProducts() {
+      const grid = document.getElementById("productGrid");
+      grid.innerHTML = "";
+
+      const filtered = products.filter(p => {
+        const matchesCat = activeCat === "ALL" || p.category === activeCat;
+        const matchesSearch = p.title.toLowerCase().includes(searchQuery.toLowerCase());
+        return matchesCat && matchesSearch;
+      });
+
+      if (filtered.length === 0) {
+        grid.innerHTML = `<div style="grid-column: 1 / -1; text-align: center; padding: 40px 0; color: #8892b0; font-size: 12px; letter-spacing: 1px;">NO ITEMS FOUND</div>`;
+        return;
+      }
+
+      filtered.forEach(p => {
+        const card = document.createElement("a");
+        card.className = "product-card";
+        card.href = p.url;
+        card.target = "_blank";
+        card.rel = "noopener noreferrer";
+
+        card.innerHTML = `
+          <div class="img-wrapper">
+            <img class="product-img" src="${p.image}" alt="${p.title}" loading="lazy">
+          </div>
+          <div class="card-info">
+            <div class="product-title">${p.title}</div>
+            <div class="price-row">
+              <span class="price">${p.price}</span>
+            </div>
+            <div class="shop-btn">SHOP NOW</div>
+          </div>
+        `;
+
+        grid.appendChild(card);
+      });
+    }
+
+    function filterCategory(cat) {
+      activeCat = cat;
+      document.querySelectorAll(".cat-btn").forEach(btn => {
+        btn.classList.toggle("active", btn.textContent === cat);
+      });
+      renderProducts();
+    }
+
+    document.getElementById("searchInput").addEventListener("input", (e) => {
+      searchQuery = e.target.value;
+      renderProducts();
+    });
+
+    // Initial Render
+    renderProducts();
+  </script>
+</body>
+</html>
